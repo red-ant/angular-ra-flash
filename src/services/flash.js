@@ -35,7 +35,7 @@ angular.module('ra.flash.services', []).
 
         var flash = {
           type:    type,
-          message: message,
+          message: message
         };
 
         flash.show = function() {

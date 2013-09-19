@@ -6,15 +6,24 @@ angular.module('ra.flash', ['ra.flash.directives', 'ra.flash.services']);
 angular.module('ra.flash.directives', ['ra.flash.services']).
 
   directive('flash', function($injector, $timeout, Flash) {
+
+    // Make compatible with 1.0.* and 1.2.0
+    var delegated = $injector.has && $injector.has('$sceDelegate'),
+        template  = '<div class="alert" ng-show="show" ng-class="flash.type">' +
+                      '<button ng-show="flash.close" type="button" class="close" data-dismiss="alert">×</button>' +
+                      '<span ng-hide="flash.trust_as" ng-bind="flash.message"></span>' +
+                      '<span ng-show="flash.trust_as" ng-bind-html-unsafe="flash.message"></span>' +
+                    '</div>';
+
+    if (delegated) {
+      template = template.replace('ng-bind-html-unsafe', 'ng-bind-html');
+    }
+
     return {
       restrict: 'EA',
       replace:  true,
       scope:    true,
-      template: '<div class="alert" ng-show="show" ng-class="flash.type">' +
-                  '<button ng-show="flash.close" type="button" class="close" data-dismiss="alert">×</button>' +
-                  '<span ng-hide="flash.trust_as" ng-bind="flash.message"></span>' +
-                  '<span ng-show="flash.trust_as" ng-bind-html="flash.message" ng-bind-html-unsafe="flash.message"></span>' +
-                '</div>',
+      template: template,
 
       link: function($scope, element, attrs) {
         $scope.init = function() {
@@ -34,9 +43,8 @@ angular.module('ra.flash.directives', ['ra.flash.services']).
               $scope.flash.type = 'alert-' + $scope.flash.type;
             }
 
-            // Make compatible with 1.0.* and 1.2.0
             if ($scope.flash.trust_as) {
-              if ($injector.has && $injector.has('$sceDelegate')) {
+              if (delegated) {
                 var $sceDelegate = $injector.get('$sceDelegate');
                 $scope.flash.message_html = $sceDelegate.trustAs($scope.flash.trust_as, $scope.flash.message);
               } else {
@@ -44,7 +52,7 @@ angular.module('ra.flash.directives', ['ra.flash.services']).
               }
             }
 
-            // Auto Hide -> Move to the service ?
+            // Auto Hide the Flash
             if ($scope.flash.auto_hide) {
               var delay = (angular.isNumber($scope.flash.auto_hide) ? $scope.flash.auto_hide : 10) * 1000;
 
@@ -99,7 +107,7 @@ angular.module('ra.flash.services', []).
 
         var flash = {
           type:    type,
-          message: message,
+          message: message
         };
 
         flash.show = function() {
