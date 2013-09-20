@@ -122,6 +122,10 @@ angular.module('ra.flash.services', []).
           service.hide();
         };
 
+        flash.nextPage = function() {
+          service.show(this, { next_page: true });
+        };
+
         return angular.extend({}, default_flash, flash, options);
       };
     }
@@ -130,8 +134,14 @@ angular.module('ra.flash.services', []).
       service[type] = flashMessage(type);
     });
 
-    service.show = function(flash) {
-      this.active = angular.extend({}, flash);
+    service.show = function(flash, options) {
+      flash = angular.extend({}, flash, options);
+
+      if (flash.next_page === true) {
+        this.next_page = flash;
+      } else {
+        this.active = flash;
+      }
     };
 
     service.hide = function() {
@@ -139,10 +149,12 @@ angular.module('ra.flash.services', []).
     };
 
     service.showOnNextPage = function() {
-      if (this.active && this.active.next_page === true) {
+      if (this.next_page) {
+        this.active = this.next_page;
         this.active.next_page = false;
+        this.next_page = false;
       } else {
-        service.hide();
+        this.hide();
       }
     };
 
