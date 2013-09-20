@@ -10,7 +10,6 @@ angular.module('ra.flash.services', []).
 
   factory('Flash', function() {
     var service = {},
-        active  = null,
         types   = [
           'generic',
           'success',

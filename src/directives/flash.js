@@ -5,16 +5,21 @@ angular.module('ra.flash.directives', ['ra.flash.services']).
   directive('flash', function($injector, $timeout, Flash) {
 
     // Make compatible with 1.0.* and 1.2.0
-    var delegated = $injector.has && $injector.has('$sceDelegate'),
-        template  = '<div class="alert" ng-show="show" ng-class="flash.type">' +
-                      '<button ng-show="flash.close" type="button" class="close" data-dismiss="alert">×</button>' +
-                      '<span ng-hide="flash.trust_as" ng-bind="flash.message"></span>' +
-                      '<span ng-show="flash.trust_as" ng-bind-html-unsafe="flash.message"></span>' +
-                    '</div>';
+    var delegated = $injector.has && $injector.has('$sceDelegate');
+
+    var bind_directive = 'ng-bind-bind-unsafe',
+        hide_directive = 'ng-hide';
 
     if (delegated) {
-      template = template.replace('ng-bind-html-unsafe', 'ng-bind-html');
+      bind_directive = 'ng-bind-html';
+      hide_directive = 'ng-if';
     }
+
+    var template  = '<div class="alert" ng-show="show" ng-class="flash.type">' +
+                      '<button ng-show="flash.close" type="button" class="close" data-dismiss="alert">×</button>' +
+                      '<span '+ hide_directive +'="!flash.trust_as" ng-bind="flash.message"></span>' +
+                      '<span '+ hide_directive +'="flash.trust_as" '+ bind_directive +'="flash.message_html"></span>' +
+                    '</div>';
 
     return {
       restrict: 'EA',
