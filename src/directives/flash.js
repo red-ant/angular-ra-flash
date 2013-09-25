@@ -7,7 +7,7 @@ angular.module('ra.flash.directives', ['ra.flash.services']).
     // Make compatible with 1.0.* and 1.2.0
     var delegated = $injector.has && $injector.has('$sceDelegate');
 
-    var bind_directive = 'ng-bind-bind-unsafe',
+    var bind_directive = 'ng-bind-html-unsafe',
         hide_directive = 'ng-hide';
 
     if (delegated) {
@@ -17,8 +17,8 @@ angular.module('ra.flash.directives', ['ra.flash.services']).
 
     var template  = '<div class="alert" ng-show="show" ng-class="flash.type">' +
                       '<button ng-show="flash.close" type="button" class="close" data-dismiss="alert">×</button>' +
-                      '<span '+ hide_directive +'="!flash.trust_as" ng-bind="flash.message"></span>' +
-                      '<span '+ hide_directive +'="flash.trust_as" '+ bind_directive +'="flash.message_html"></span>' +
+                      '<span '+ hide_directive +'="flash.trust_as" ng-bind="flash.message"></span>' +
+                      '<span '+ hide_directive +'="!flash.trust_as" '+ bind_directive +'="flash.message_html"></span>' +
                     '</div>';
 
     return {
@@ -45,7 +45,7 @@ angular.module('ra.flash.directives', ['ra.flash.services']).
               $scope.flash.type = 'alert-' + $scope.flash.type;
             }
 
-            if ($scope.flash.trust_as) {
+            if ($scope.flash.trust_as === 'html') {
               if (delegated) {
                 var $sceDelegate = $injector.get('$sceDelegate');
                 $scope.flash.message_html = $sceDelegate.trustAs($scope.flash.trust_as, $scope.flash.message);
