@@ -18,7 +18,7 @@ angular.module('ra.flash.directives', ['ra.flash.services']).
       hide_directive = 'ng-if';
     }
 
-    var template  = '<div class="alert" ng-show="show" ng-class="flash.type">' +
+    var template  = '<div class="alert" ng-show="show" ng-class="flash.classes">' +
                       '<button ng-show="flash.close" type="button" class="close" data-dismiss="alert">×</button>' +
                       '<span '+ hide_directive +'="flash.trust_as" ng-bind="flash.message"></span>' +
                       '<span '+ hide_directive +'="!flash.trust_as" '+ bind_directive +'="flash.message_html"></span>' +
@@ -66,6 +66,15 @@ angular.module('ra.flash.directives', ['ra.flash.services']).
                 $scope.show = false;
               }, delay);
             }
+
+            var classes = [$scope.flash.type];
+
+            // Add dismissable class for closable alerts
+            if ($scope.flash.close) {
+              classes.push('alert-dismissable');
+            }
+
+            $scope.flash.classes = classes.join(' ');
           } else {
             $scope.show = false;
           }
