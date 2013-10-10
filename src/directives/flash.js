@@ -8,17 +8,17 @@ angular.module('ra.flash.directives', ['ra.flash.services']).
     var delegated = $injector.has && $injector.has('$sceDelegate');
 
     var bind_directive = 'ng-bind-html-unsafe',
-        hide_directive = 'ng-hide';
+        show_directive = 'ng-show';
 
     if (delegated) {
       bind_directive = 'ng-bind-html';
-      hide_directive = 'ng-if';
+      show_directive = 'ng-if';
     }
 
     var template  = '<div class="alert" ng-show="show" ng-class="flash.classes">' +
                       '<button ng-show="flash.close" type="button" class="close" data-dismiss="alert">×</button>' +
-                      '<span '+ hide_directive +'="flash.trust_as" ng-bind="flash.message"></span>' +
-                      '<span '+ hide_directive +'="!flash.trust_as" '+ bind_directive +'="flash.message_html"></span>' +
+                      '<span '+ show_directive +'="!flash.trust_as" ng-bind="flash.message"></span>' +
+                      '<span '+ show_directive +'="flash.trust_as" '+ bind_directive +'="flash.message_html"></span>' +
                     '</div>';
 
     return {
