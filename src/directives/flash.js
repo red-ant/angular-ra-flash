@@ -16,7 +16,7 @@ angular.module('ra.flash.directives', ['ra.flash.services']).
     }
 
     var template  = '<div class="alert" ng-show="show" ng-class="flash.classes">' +
-                      '<button ng-show="flash.close" type="button" class="close" data-dismiss="alert">×</button>' +
+                      '<button ng-show="flash.close" type="button" class="close" ng-click="show = false">×</button>' +
                       '<span '+ show_directive +'="!flash.trust_as" ng-bind="flash.message"></span>' +
                       '<span '+ show_directive +'="flash.trust_as" '+ bind_directive +'="flash.message_html"></span>' +
                     '</div>';
