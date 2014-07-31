@@ -2,7 +2,7 @@
 
 angular.module('ra.flash.directives', ['ra.flash.services']).
 
-  directive('flash', function($injector, $timeout, Flash) {
+  directive('flash', function($injector, $timeout, $interpolate, Flash) {
 
     // Make compatible with 1.0.* and 1.2.0
     var delegated = $injector.has && $injector.has('$sceDelegate');
@@ -43,6 +43,10 @@ angular.module('ra.flash.directives', ['ra.flash.services']).
             // Set the correct alert Bootstrap class
             if ($scope.flash.type && $scope.flash.type.indexOf('alert-') !== 0) {
               $scope.flash.type = 'alert-' + $scope.flash.type;
+            }
+
+            if (angular.isString($scope.flash.message)) {
+              $scope.flash.message = $interpolate($scope.flash.message)($scope);
             }
 
             if ($scope.flash.trust_as === 'html') {

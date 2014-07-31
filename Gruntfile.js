@@ -88,6 +88,6 @@
     });
 
     grunt.registerTask('test', 'karma:dev');
-    grunt.registerTask('build', ['jshint', 'bower', 'karma:dist', 'clean', 'concat', 'ngmin', 'uglify']);
+    grunt.registerTask('build', ['jshint', 'clean', 'concat', 'ngmin', 'uglify']);
   };
 })();
