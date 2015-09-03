@@ -27,10 +27,6 @@ describe('Module: ra.flash.services >', function() {
         expect(generic_flash.close).toBe(true);
       });
 
-      it('should default trust_as to false', function() {
-        expect(generic_flash.trust_as).toBe(false);
-      });
-
       it('should default auto_hide to false', function() {
         expect(generic_flash.auto_hide).toBe(false);
       });
