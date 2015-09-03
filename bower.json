@@ -24,6 +24,9 @@
     "karma.conf.js",
     "package.json"
   ],
+  "main": [
+    "angular-ra-flash.js"
+  ],
   "dependencies": {
     "angular": "~1.4.0"
   },
