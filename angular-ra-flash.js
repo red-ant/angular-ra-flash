@@ -1,5 +1,5 @@
 /*!
- * angular-ra-flash.js v0.1.0
+ * angular-ra-flash.js v0.1.1
  * https://github.com/red-ant/angular-ra-flash
  */
 
