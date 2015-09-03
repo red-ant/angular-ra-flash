@@ -1,7 +1,4 @@
-'use strict';
-
 angular.module('ra.flash.services', []).
-
   run(function($rootScope, Flash) {
     $rootScope.$on('$routeChangeSuccess', function() {
       Flash.showOnNextPage();
@@ -10,7 +7,7 @@ angular.module('ra.flash.services', []).
 
   factory('Flash', function() {
     var service = {},
-        types   = [
+        types = [
           'generic',
           'success',
           'info',
@@ -21,7 +18,6 @@ angular.module('ra.flash.services', []).
 
     var default_flash = {
       close:     true,
-      trust_as:  false,
       auto_hide: false,
       next_page: false
     };

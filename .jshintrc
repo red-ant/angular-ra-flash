@@ -31,6 +31,7 @@
   "shadow"        : false,
   "supernew"      : false,
   "undef"         : true,
+  "unused"        : true,
   "newcap"        : true,
   "noempty"       : true,
   "nonew"         : true,

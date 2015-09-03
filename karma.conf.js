@@ -3,10 +3,6 @@
 
 module.exports = function(config) {
   config.set({
-    basePath: '',
-
-    frameworks: ['jasmine'],
-
     files: [
       'components/angular/angular.js',
       'components/angular-mocks/angular-mocks.js',
@@ -14,18 +10,16 @@ module.exports = function(config) {
       'test/**/*.js'
     ],
 
+    basePath: '',
+    frameworks: ['jasmine'],
     exclude: [],
-
     port: 9876,
-
     colors: true,
     logLevel: config.LOG_INFO,
     reporters: ['progress'],
-
-    browsers: ['Chrome'],
-
+    browsers: ['PhantomJS2'],
     autoWatch: true,
-    singleRun: true,
+    singleRun: false,
     captureTimeout: 60000
   });
 };
