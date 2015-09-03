@@ -1,106 +1,109 @@
+/*!
+ * angular-ra-flash.js v0.1.0
+ * https://github.com/red-ant/angular-ra-flash
+ */
+
+(function() {
 'use strict';
-// Source: src/angular-ra-flash.js
-angular.module('ra.flash', ['ra.flash.directives', 'ra.flash.services']);
 
-// Source: src/directives/flash.js
+angular.module('ra.flash', [
+  'ra.flash.directives',
+  'ra.flash.services'
+]);
+
 angular.module('ra.flash.directives', ['ra.flash.services']).
+  directive('flash', ['$timeout', '$interpolate', 'Flash', function($timeout, $interpolate, Flash) {
+    var Controller = function() {
+      this.show    = false;
+      this.data    = {};
+      this.classes = '';
+    };
 
-  directive('flash', function($injector, $timeout, $interpolate, Flash) {
+    Controller.prototype.init = function(data) {
+      this.data = data;
 
-    // Make compatible with 1.0.* and 1.2.0
-    var delegated = $injector.has && $injector.has('$sceDelegate');
+      // Set the alert classes
+      this.setClasses();
 
-    var bind_directive = 'ng-bind-html-unsafe',
-        show_directive = 'ng-show';
+      // Auto dide the alert
+      if (data.auto_hide) {
+        this.delay();
+      }
 
-    if (delegated) {
-      bind_directive = 'ng-bind-html';
-      show_directive = 'ng-if';
-    }
+      this.show = true;
+    };
 
-    var template  = '<div class="alert" ng-show="show" ng-class="flash.classes">' +
-                      '<button ng-show="flash.close" type="button" class="close" ng-click="show = false">×</button>' +
-                      '<span '+ show_directive +'="!flash.trust_as" ng-bind="flash.message"></span>' +
-                      '<span '+ show_directive +'="flash.trust_as" '+ bind_directive +'="flash.message_html"></span>' +
-                    '</div>';
+    Controller.prototype.setClasses = function() {
+      var classes = [];
+
+      // Set the correct alert class
+      if (this.data.type && this.data.type.indexOf('alert-') !== 0) {
+        this.data.type = 'alert-' + this.data.type;
+      }
+
+      classes.push(this.data.type);
+
+      // Add dismissable class for alerts that close
+      if (this.data.close) {
+        classes.push('alert-dismissable');
+      }
+
+      this.classes = classes.join(' ');
+    };
+
+    Controller.prototype.delay = function() {
+      var delay     = 10,
+          auto_hide = parseInt(this.data.auto_hide, 10),
+          self      = this;
+
+      if (isNaN(auto_hide) === false) {
+        delay = auto_hide;
+      }
+
+      $timeout(function() {
+        Flash.hide();
+        self.show = false;
+      }, delay * 1000);
+    };
 
     return {
-      restrict: 'EA',
-      replace:  true,
-      scope:    true,
-      template: template,
+      restrict:     'EA',
+      replace:      true,
+      scope:        true,
+      controllerAs: 'flash',
+      controller:   Controller,
 
-      link: function($scope, element, attrs) {
-        $scope.init = function() {
-          // Move the service into the scope to watch for changes
-          $scope.flash_service = Flash;
-          $scope.$watch('flash_service.active', $scope.active);
-        };
+      template: '<div class="alert" ng-show="flash.show" ng-class="flash.classes">' +
+                '  <button ng-show="flash.data.close" type="button" class="close" ng-click="flash.show = false">×</button>' +
+                '  <span ng-bind-html="flash.data.message"></span>' +
+                '</div>',
 
-        $scope.active = function() {
-          $scope.flash = $scope.flash_service.active;
+      link: function(scope) {
+        scope.service = Flash;
 
-          if ($scope.flash) {
-            $scope.show = true;
-
-            // Set the correct alert Bootstrap class
-            if ($scope.flash.type && $scope.flash.type.indexOf('alert-') !== 0) {
-              $scope.flash.type = 'alert-' + $scope.flash.type;
+        scope.$watch('service.active', function(active) {
+          if (active && active.message) {
+            if (angular.isString(active.message)) {
+              active.message = $interpolate(active.message)(scope);
             }
 
-            if (angular.isString($scope.flash.message)) {
-              $scope.flash.message = $interpolate($scope.flash.message)($scope);
-            }
-
-            if ($scope.flash.trust_as === 'html') {
-              if (delegated) {
-                var $sceDelegate = $injector.get('$sceDelegate');
-                $scope.flash.message_html = $sceDelegate.trustAs($scope.flash.trust_as, $scope.flash.message);
-              } else {
-                $scope.flash.message_html = $scope.flash.message;
-              }
-            }
-
-            // Auto Hide the Flash
-            if ($scope.flash.auto_hide) {
-              var delay = (angular.isNumber($scope.flash.auto_hide) ? $scope.flash.auto_hide : 10) * 1000;
-
-              $timeout(function() {
-                $scope.flash_service.hide();
-                $scope.show = false;
-              }, delay);
-            }
-
-            var classes = [$scope.flash.type];
-
-            // Add dismissable class for closable alerts
-            if ($scope.flash.close) {
-              classes.push('alert-dismissable');
-            }
-
-            $scope.flash.classes = classes.join(' ');
-          } else {
-            $scope.show = false;
+            scope.flash.init(active);
           }
-        };
-
-        $scope.init();
+        });
       }
     };
-  });
+  }]);
 
-// Source: src/services/flash.js
 angular.module('ra.flash.services', []).
-
-  run(function($rootScope, Flash) {
+  run(['$rootScope', 'Flash', function($rootScope, Flash) {
     $rootScope.$on('$routeChangeSuccess', function() {
       Flash.showOnNextPage();
     });
-  }).
+  }]).
 
   factory('Flash', function() {
     var service = {},
-        types   = [
+        types = [
           'generic',
           'success',
           'info',
@@ -111,7 +114,6 @@ angular.module('ra.flash.services', []).
 
     var default_flash = {
       close:     true,
-      trust_as:  false,
       auto_hide: false,
       next_page: false
     };
@@ -173,3 +175,4 @@ angular.module('ra.flash.services', []).
 
     return service;
   });
+}());
